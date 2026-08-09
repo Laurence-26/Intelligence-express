@@ -197,6 +197,7 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
   top: 0;
   z-index: 50;
   background: rgba(251, 248, 246, 0.92);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }
@@ -246,6 +247,7 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
   gap: 2px;
 }
 .lang-toggle button {
+  position: relative;
   border: 0;
   cursor: pointer;
   padding: 6px 13px;
@@ -257,6 +259,13 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
   background: transparent;
   color: var(--muted-2);
   transition: background-color 160ms ease, color 160ms ease;
+}
+/* The pills are small by design; this grows the touch target to ~44px tall
+   for thumbs without changing the header layout. */
+.lang-toggle button::after {
+  content: "";
+  position: absolute;
+  inset: -11px -1px;
 }
 .lang-toggle button:hover { color: var(--ink); }
 .lang-toggle button[aria-pressed="true"] { background: var(--ink); color: #fff; }
@@ -284,7 +293,12 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
 /* ---------- Hero ---------- */
 
 .hero {
-  background: var(--ink);
+  background-color: var(--ink);
+  background-image:
+    linear-gradient(rgba(12, 13, 15, 0.90), rgba(12, 13, 15, 0.95)),
+    url("../assets/van.jpeg");
+  background-size: cover;
+  background-position: center;
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -839,6 +853,7 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
   position: absolute;
   inset: 0;
   background: rgba(22, 24, 27, 0.6);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 .modal-dialog {
@@ -928,7 +943,6 @@ body.modal-open { overflow: hidden; }
   .brand img { width: 36px; height: 36px; border-radius: 9px; }
   .brand-top { font-size: 11px; }
   .brand-bottom { font-size: 15px; }
-  .nav-toggle { width: 40px; height: 36px; padding: 0 9px; }
   .header-actions { gap: 8px; margin-left: 0; }
   .lang-toggle button { padding: 5px 9px; font-size: 11px; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
@@ -937,9 +951,11 @@ body.modal-open { overflow: hidden; }
   .gallery { grid-auto-rows: minmax(180px, 220px); }
 }
 
-/* Very narrow (folded phones, 280–340px): drop the wordmark, keep the logo */
+/* Very narrow (folded phones, 280–340px): drop the wordmark, keep the logo.
+   Only here does the menu button go under the 44px tap target — there is no room. */
 @media (max-width: 340px) {
   .brand-text { display: none; }
+  .nav-toggle { width: 40px; height: 38px; padding: 0 9px; }
   .badge { font-size: 11px; letter-spacing: 0.04em; }
   .btn { padding: 14px 20px; font-size: 15px; }
   .btn-orange, .btn-ghost, .btn-outline-light { padding: 14px 20px; }
