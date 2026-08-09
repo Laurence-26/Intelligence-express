@@ -31,9 +31,17 @@ tests/interactions.html     browser test page for the interactive bits
   dataset — `IE-4821`, `IE-7390`, `IE-1156` — so the flow can be demonstrated.
   Wiring it to a real system means replacing the lookup in `initTracking()` with a
   `fetch()` to an API that returns the same shape.
-- Responsive down to small phones, keyboard accessible (skip link, focus styles,
-  Escape-to-close and focus trapping in the modal), `prefers-reduced-motion`
-  respected, and `MovingCompany` schema.org data for search engines.
+- **Responsive from 280px to ultrawide.** Verified with no horizontal overflow at
+  280, 320, 360, 390, 414, 480, 540, 600, 768, 834, 900, 1024, 1180, 1280, 1440,
+  1600, 1920 and 2560 CSS pixels. Three things make that hold: grid floors are
+  written `minmax(min(280px, 100%), 1fr)` so a track never exceeds a narrow
+  viewport; form controls carry `min-width: 0` (an `<input>` otherwise claims a
+  ~213px intrinsic width and bursts its grid track); and headings use
+  `overflow-wrap: break-word` for long Swahili compounds. Below 340px the
+  wordmark gives way to the logo alone so the header stays on one line.
+- Keyboard accessible (skip link, focus styles, Escape-to-close and focus
+  trapping in the modal), `prefers-reduced-motion` respected, and
+  `MovingCompany` schema.org data for search engines.
 
 ## Running it locally
 
