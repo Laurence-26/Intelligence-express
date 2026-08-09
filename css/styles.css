@@ -775,8 +775,16 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
 
 /* ---------- Footer ---------- */
 
-.site-footer { background: var(--ink); color: rgba(255, 255, 255, 0.6); }
-.site-footer .wrap { padding-top: 60px; padding-bottom: 40px; }
+.site-footer {
+  background-color: var(--ink);
+  background-image:
+    linear-gradient(rgba(12, 13, 15, 0.84), rgba(12, 13, 15, 0.93)),
+    url("../assets/truck-night.jpeg");
+  background-size: cover;
+  background-position: center;
+  color: rgba(255, 255, 255, 0.66);
+}
+.site-footer .wrap { padding-top: 76px; padding-bottom: 44px; }
 
 .footer-top {
   display: grid;
