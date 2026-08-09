@@ -1,0 +1,20 @@
+# Raw source material kept locally, not part of the site
+/uploads/
+/*.jfif
+/*.jpeg
+/*.jpg
+/*.png
+/.thumbnail
+/*.mht
+
+# Design prototype the site was built from (dc runtime, not shipped)
+/*.dc.html
+/support.js
+/intelligence-express-post*.md
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

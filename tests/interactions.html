@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Intelligence Express — interaction tests</title>
+<style>
+body { font: 14px/1.5 system-ui, sans-serif; margin: 24px; }
+iframe { width: 1200px; height: 700px; border: 1px solid #ccc; }
+#out { font-family: ui-monospace, monospace; white-space: pre-wrap; }
+.pass { color: #157f4a; } .fail { color: #c02626; font-weight: 700; }
+</style></head>
+<body>
+<h1>Interaction tests</h1>
+<p>Open this file over <code>http://</code> (e.g. <code>python -m http.server</code>) and the results appear below.
+   Opening it straight from disk needs Chrome's <code>--allow-file-access-from-files</code> flag, otherwise the
+   browser blocks the test from reaching into the iframe.</p>
+<div id="out">running…</div>
+<iframe id="f" src="../index.html"></iframe>
+
+<script>
+var log = [];
+function ok(name, cond, extra) { log.push((cond ? "PASS " : "FAIL ") + name + (extra ? " [" + extra + "]" : "")); }
+
+document.getElementById('f').addEventListener('load', function () {
+  var w = this.contentWindow, d = this.contentDocument;
+  setTimeout(function () {
+    try {
+      // 1. defaults
+      ok("default lang is sw", d.documentElement.lang === "sw", d.documentElement.lang);
+      ok("hero in swahili", /Hatubebi/.test(d.querySelector("h1").textContent));
+      ok("title set", /Usafirishaji/.test(d.title), d.title);
+
+      // 2. tracking: known code
+      d.getElementById("track-input").value = "ie-4821";
+      d.getElementById("track-form").dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+      ok("result shown for IE-4821", !d.getElementById("track-result").hidden);
+      ok("route rendered", d.getElementById("track-route").textContent.indexOf("Mwanza") > -1, d.getElementById("track-route").textContent);
+      ok("status in swahili", d.getElementById("track-status").textContent === "Njiani", d.getElementById("track-status").textContent);
+      ok("4 timeline events", d.querySelectorAll("#track-events li").length === 4, d.querySelectorAll("#track-events li").length);
+      ok("error hidden", d.getElementById("track-error").hidden);
+
+      // 3. language switch
+      d.querySelector('.lang-toggle button[data-lang="en"]').click();
+      ok("lang attr en", d.documentElement.lang === "en");
+      ok("hero in english", /We don't just/.test(d.querySelector("h1").textContent));
+      ok("nav translated", d.querySelector('[data-i18n="navServices"]').textContent === "Services");
+      ok("tracking re-rendered in en", d.getElementById("track-status").textContent === "In transit", d.getElementById("track-status").textContent);
+      ok("placeholder translated", d.querySelector('#pickup-modal input[name="name"]').placeholder === "Your name");
+      ok("lang persisted", w.localStorage.getItem("ie-lang") === "en");
+
+      // 4. tracking: unknown code
+      d.getElementById("track-input").value = "IE-0000";
+      d.getElementById("track-form").dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+      ok("error shown for bad code", !d.getElementById("track-error").hidden);
+      ok("result hidden for bad code", d.getElementById("track-result").hidden);
+
+      // 5. modal
+      var modal = d.getElementById("pickup-modal");
+      ok("modal starts hidden", modal.hidden);
+      d.querySelector("[data-open-modal]").click();
+      ok("modal opens", !modal.hidden);
+      ok("body scroll locked", d.body.classList.contains("modal-open"));
+      d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      ok("escape closes", modal.hidden);
+      ok("body unlocked", !d.body.classList.contains("modal-open"));
+
+      // 6. pickup form -> whatsapp
+      var opened = null;
+      w.open = function (url) { opened = url; return null; };
+      var form = d.querySelector(".contact .pickup-form");
+      form.querySelector('[name="name"]').value = "Asha";
+      form.querySelector('[name="phone"]').value = "0712345678";
+      form.querySelector('[name="from"]').value = "Kariakoo";
+      form.querySelector('[name="to"]').value = "Mwanza";
+      form.querySelector('[name="item"]').value = "Katoni 2";
+      form.dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+      ok("whatsapp url built", !!opened && opened.indexOf("https://wa.me/255690500000?text=") === 0);
+      ok("details encoded", !!opened && decodeURIComponent(opened).indexOf("Asha") > -1 && decodeURIComponent(opened).indexOf("Mwanza") > -1);
+      ok("labels follow language", !!opened && decodeURIComponent(opened).indexOf("Your name") > -1);
+
+      // 7. required fields block submit
+      opened = null;
+      d.querySelector("#pickup-modal .pickup-form").dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+      ok("empty form blocked", opened === null);
+
+      // 8. mobile nav
+      var tog = d.querySelector(".nav-toggle"), nav = d.getElementById("site-nav");
+      tog.click();
+      ok("nav opens", nav.classList.contains("is-open") && tog.getAttribute("aria-expanded") === "true");
+      nav.querySelector("a").click();
+      ok("nav closes on link", !nav.classList.contains("is-open"));
+
+      // 9. back to swahili
+      d.querySelector('.lang-toggle button[data-lang="sw"]').click();
+      ok("back to sw", d.documentElement.lang === "sw" && /Hatubebi/.test(d.querySelector("h1").textContent));
+      ok("aria-pressed correct", d.querySelector('[data-lang="sw"]').getAttribute("aria-pressed") === "true" && d.querySelector('[data-lang="en"]').getAttribute("aria-pressed") === "false");
+
+      // 10. footer year
+      ok("year filled", d.getElementById("year").textContent === String(new Date().getFullYear()), d.getElementById("year").textContent);
+    } catch (e) {
+      log.push("FAIL harness error: " + e.message);
+    }
+
+    var passed = log.filter(function (l) { return l.indexOf("PASS") === 0; }).length;
+    var el = document.getElementById("out");
+    el.textContent = "";
+    log.forEach(function (line) {
+      var div = document.createElement("div");
+      div.className = line.indexOf("PASS") === 0 ? "pass" : "fail";
+      div.textContent = line;
+      el.appendChild(div);
+    });
+    var sum = document.createElement("h2");
+    sum.textContent = "RESULTS>>" + passed + "/" + log.length + "<<END";
+    el.appendChild(sum);
+  }, 800);
+});
+</script>
+</body></html>
