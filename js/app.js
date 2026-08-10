@@ -31,12 +31,20 @@
       stat2K: "Door to door", stat2V: "Kuchukua na kufikisha",
       stat3K: "Hatua kwa hatua", stat3V: "Taarifa za mzigo",
 
+      demoBadge: "Mfumo wa majaribio",
       trackLabel: "Fuatilia mzigo",
       trackTitle: "Mzigo wako umefika wapi?",
-      trackHint: "Jaribu: IE-4821, IE-7390 au IE-1156",
+      trackHint: "Namba za majaribio pekee — bonyeza mojawapo hapa chini.",
       trackBtn: "Fuatilia",
-      trackNotFound: "Namba hii haipo kwenye mfumo. Piga 0690 500 000 tukusaidie.",
+      trackNotFound: "Namba hii haipo kwenye mfumo wa majaribio. Piga 0690 500 000 kwa mzigo halisi.",
       trackRoute: "Safari", trackStatus: "Hali", trackReceiver: "Mpokeaji",
+      trackEta: "Inatarajiwa", trackCode: "Namba ya mzigo",
+      stage1: "Imechukuliwa", stage2: "Hub", stage3: "Njiani", stage4: "Imefikishwa",
+
+      italkTagline: "Msaidizi wa Intelligence Express",
+      italkInputLabel: "Andika ujumbe",
+      italkPlaceholder: "Andika swali lako...",
+      italkNote: "Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.",
 
       svcLabel: "Huduma zetu",
       svcTitle: "Wewe uza, sisi tutadeliver.",
@@ -122,12 +130,20 @@
       stat2K: "Door to door", stat2V: "Collection and delivery",
       stat3K: "Step by step", stat3V: "Shipment updates",
 
+      demoBadge: "Demo system",
       trackLabel: "Track a shipment",
       trackTitle: "Where is your package?",
-      trackHint: "Try: IE-4821, IE-7390 or IE-1156",
+      trackHint: "Demo numbers only — tap one below.",
       trackBtn: "Track",
-      trackNotFound: "We can't find that number. Call 0690 500 000 and we'll help.",
+      trackNotFound: "That number isn't in the demo system. Call 0690 500 000 for a real shipment.",
       trackRoute: "Route", trackStatus: "Status", trackReceiver: "Receiver",
+      trackEta: "Expected", trackCode: "Tracking number",
+      stage1: "Collected", stage2: "At hub", stage3: "In transit", stage4: "Delivered",
+
+      italkTagline: "Intelligence Express assistant",
+      italkInputLabel: "Type a message",
+      italkPlaceholder: "Ask your question...",
+      italkNote: "Quick answers to common questions. For prices and detail, we hand you to WhatsApp.",
 
       svcLabel: "Our services",
       svcTitle: "You sell. We deliver.",
@@ -196,14 +212,23 @@
     }
   };
 
-  /* ------------------------------------------------- demo shipment dataset */
+  /* ------------------------------------------------- demo shipment dataset
+
+     Six sample shipments so the flow can be demonstrated end to end. This is
+     deliberately a fixed set rather than a generator: a real customer typing a
+     real code must get "not found", never invented status for their package.
+     `stage` is 1-4 and drives the progress bar.                             */
+
+  var STAGE_COUNT = 4;
 
   var SHIPMENTS = {
     "IE-4821": {
       route: "Dar es Salaam → Mwanza",
       receiver: "Neema S.",
+      stage: 3,
       sw: {
         status: "Njiani",
+        eta: "Kesho, saa 4 asubuhi",
         events: [
           { title: "Mzigo umepokelewa kwa mtumaji", meta: "Kariakoo, Dar es Salaam · 07:40" },
           { title: "Umeingia kwenye gari la mikoani", meta: "Hub ya Kariakoo · 09:15" },
@@ -213,6 +238,7 @@
       },
       en: {
         status: "In transit",
+        eta: "Tomorrow, 10:00",
         events: [
           { title: "Collected from sender", meta: "Kariakoo, Dar es Salaam · 07:40" },
           { title: "Loaded for upcountry", meta: "Kariakoo hub · 09:15" },
@@ -224,8 +250,10 @@
     "IE-7390": {
       route: "Dar es Salaam → Arusha",
       receiver: "Duka la Baraka",
+      stage: 4,
       sw: {
         status: "Imefikishwa",
+        eta: "Imeshafika",
         events: [
           { title: "Mzigo umepokelewa kwa mtumaji", meta: "Ilala · 08:05" },
           { title: "Umefika Arusha", meta: "Ofisi ya Arusha · 06:10" },
@@ -235,6 +263,7 @@
       },
       en: {
         status: "Delivered",
+        eta: "Already arrived",
         events: [
           { title: "Collected from sender", meta: "Ilala · 08:05" },
           { title: "Arrived in Arusha", meta: "Arusha office · 06:10" },
@@ -246,8 +275,10 @@
     "IE-1156": {
       route: "Mbeya → Dar es Salaam",
       receiver: "Hamisi J.",
+      stage: 2,
       sw: {
         status: "Imechukuliwa",
+        eta: "Baada ya siku 2",
         events: [
           { title: "Ombi la pickup limepokelewa", meta: "WhatsApp · 14:02" },
           { title: "Mzigo umechukuliwa ulipo", meta: "Mbeya mjini · 16:40" },
@@ -256,14 +287,87 @@
       },
       en: {
         status: "Collected",
+        eta: "In 2 days",
         events: [
           { title: "Pickup request received", meta: "WhatsApp · 14:02" },
           { title: "Collected from your location", meta: "Mbeya town · 16:40" },
           { title: "Awaiting the Dar vehicle", meta: "Mbeya hub · 17:10" }
         ]
       }
+    },
+    "IE-2044": {
+      route: "Dar es Salaam → Dodoma",
+      receiver: "Salma A.",
+      stage: 1,
+      sw: {
+        status: "Imepokelewa",
+        eta: "Kesho jioni",
+        events: [
+          { title: "Ombi la pickup limepokelewa", meta: "Simu · 09:12" },
+          { title: "Dereva yuko njiani kuja kwako", meta: "Kinondoni · 10:05" }
+        ]
+      },
+      en: {
+        status: "Received",
+        eta: "Tomorrow evening",
+        events: [
+          { title: "Pickup request received", meta: "Phone call · 09:12" },
+          { title: "Driver on the way to you", meta: "Kinondoni · 10:05" }
+        ]
+      }
+    },
+    "IE-6310": {
+      route: "Dar es Salaam → Kampala",
+      receiver: "Okello Trading",
+      stage: 3,
+      sw: {
+        status: "Njiani (nchi za jirani)",
+        eta: "Baada ya siku 3",
+        events: [
+          { title: "Mzigo umepokelewa kwa mtumaji", meta: "Kariakoo · 06:50" },
+          { title: "Nyaraka za mpaka zimekamilika", meta: "Hub ya Kariakoo · 12:30" },
+          { title: "Njiani kwenda Kampala", meta: "Imepita Mutukula · 21:05" }
+        ]
+      },
+      en: {
+        status: "In transit (cross-border)",
+        eta: "In 3 days",
+        events: [
+          { title: "Collected from sender", meta: "Kariakoo · 06:50" },
+          { title: "Border paperwork cleared", meta: "Kariakoo hub · 12:30" },
+          { title: "On the road to Kampala", meta: "Passed Mutukula · 21:05" }
+        ]
+      }
+    },
+    "IE-9075": {
+      route: "Dar es Salaam → Dar es Salaam",
+      receiver: "Asha M.",
+      stage: 4,
+      sw: {
+        status: "Imefikishwa",
+        eta: "Imeshafika",
+        events: [
+          { title: "Mzigo umechukuliwa dukani", meta: "Kariakoo · 11:20" },
+          { title: "Njiani kwa mpokeaji", meta: "Mbezi Beach · 13:40" },
+          { title: "Mpokeaji ameshajulishwa", meta: "Simu · 13:45" },
+          { title: "Imefikishwa mpaka mlangoni", meta: "Mbezi Beach · 14:15" }
+        ]
+      },
+      en: {
+        status: "Delivered",
+        eta: "Already arrived",
+        events: [
+          { title: "Collected from the shop", meta: "Kariakoo · 11:20" },
+          { title: "Out for delivery", meta: "Mbezi Beach · 13:40" },
+          { title: "Receiver notified", meta: "Phone call · 13:45" },
+          { title: "Delivered to the door", meta: "Mbezi Beach · 14:15" }
+        ]
+      }
     }
   };
+
+  // Expose the demo set so the I Talk assistant can answer tracking questions.
+  window.IE_SHIPMENTS = SHIPMENTS;
 
   /* ---------------------------------------------------------------- helpers */
 
@@ -315,9 +419,33 @@
 
     if (state.foundCode) renderShipment(state.foundCode);
     storeLang(lang);
+
+    // I Talk listens for this so the assistant switches language with the site.
+    document.dispatchEvent(new CustomEvent("ie:lang", { detail: { lang: lang } }));
   }
 
   /* --------------------------------------------------------------- tracking */
+
+  function renderStages(ship) {
+    var t = COPY[state.lang];
+    var list = $("#track-stages");
+    var fill = $("#track-bar-fill");
+    var delivered = ship.stage >= STAGE_COUNT;
+
+    if (fill) {
+      fill.style.width = Math.round((ship.stage / STAGE_COUNT) * 100) + "%";
+      fill.classList.toggle("is-delivered", delivered);
+    }
+
+    if (!list) return;
+    list.textContent = "";
+    for (var i = 1; i <= STAGE_COUNT; i++) {
+      var li = document.createElement("li");
+      li.textContent = t["stage" + i];
+      if (i <= ship.stage) li.className = "is-done";
+      list.appendChild(li);
+    }
+  }
 
   function renderShipment(code) {
     var ship = SHIPMENTS[code];
@@ -327,8 +455,15 @@
     var detail = ship[state.lang] || ship.sw;
 
     $("#track-route").textContent = ship.route;
-    $("#track-status").textContent = detail.status;
     $("#track-receiver").textContent = ship.receiver;
+    $("#track-eta").textContent = detail.eta;
+    $("#track-code").textContent = code;
+
+    var status = $("#track-status");
+    status.textContent = detail.status;
+    status.classList.toggle("is-delivered", ship.stage >= STAGE_COUNT);
+
+    renderStages(ship);
 
     var list = $("#track-events");
     list.textContent = "";
@@ -363,22 +498,63 @@
     result.hidden = false;
   }
 
+  // Accepts "ie4821", "IE 4821", "ie-4821" — people rarely type the dash.
+  function normaliseCode(raw) {
+    var digits = String(raw || "").replace(/[^0-9]/g, "");
+    return digits.length === 4 ? "IE-" + digits : String(raw || "").trim().toUpperCase();
+  }
+
+  function lookup(raw) {
+    var code = normaliseCode(raw);
+    return Object.prototype.hasOwnProperty.call(SHIPMENTS, code) ? code : null;
+  }
+
+  function showShipment(raw) {
+    var hit = lookup(raw);
+    var code = String(raw || "").trim();
+
+    state.foundCode = hit;
+    $("#track-error").hidden = !(code.length > 0 && !hit);
+    $("#track-result").hidden = !hit;
+    if (hit) renderShipment(hit);
+    return hit;
+  }
+
   function initTracking() {
     var form = $("#track-form");
     if (!form) return;
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var code = ($("#track-input").value || "").trim().toUpperCase();
-      var hit = Object.prototype.hasOwnProperty.call(SHIPMENTS, code) ? code : null;
-
-      state.foundCode = hit;
-      $("#track-error").hidden = !(code.length > 0 && !hit);
-      $("#track-result").hidden = !hit;
-
-      if (hit) renderShipment(hit);
+      showShipment($("#track-input").value);
     });
+
+    // One chip per demo shipment, so a visitor never has to guess a code.
+    var chips = $("#track-chips");
+    if (chips) {
+      Object.keys(SHIPMENTS).forEach(function (code) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = code;
+        btn.addEventListener("click", function () {
+          $("#track-input").value = code;
+          showShipment(code);
+          $("#track-result").scrollIntoView({ block: "nearest", behavior: "smooth" });
+        });
+        chips.appendChild(btn);
+      });
+    }
   }
+
+  // The assistant answers tracking questions by driving the same panel.
+  window.IE_TRACK = function (raw) {
+    var hit = showShipment(raw);
+    if (hit) {
+      var card = document.querySelector(".track-card");
+      if (card) card.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+    return hit;
+  };
 
   /* ------------------------------------------------------------------ forms */
 

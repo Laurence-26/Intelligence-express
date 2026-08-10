@@ -6,13 +6,13 @@
 <title>Intelligence Express — Usafirishaji wa mizigo Dar es Salaam na mikoani</title>
 <meta name="description" content="Intelligence Express: usafirishaji wa cargo, parcels na bidhaa za biashara kutoka Dar es Salaam kwenda mikoani na nchi za jirani. Pickup ni bure — tunakufuata ulipo. Piga 0690 500 000." />
 <meta name="theme-color" content="#16181B" />
-<link rel="canonical" href="https://intelligence-express.co.tz/" />
+<link rel="canonical" href="https://intelligence-express.onrender.com/" />
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Intelligence Express" />
 <meta property="og:title" content="Intelligence Express — Hatubebi tu mizigo, tunabeba na biashara yako" />
 <meta property="og:description" content="Cargo, parcels, door to door na kuhama. Pickup bure popote ulipo Dar es Salaam. 0690 500 000." />
-<meta property="og:image" content="assets/van.jpeg" />
+<meta property="og:image" content="https://intelligence-express.onrender.com/assets/van.jpeg" />
 <meta name="twitter:card" content="summary_large_image" />
 
 <link rel="icon" href="assets/logo-orange.jpeg" />
@@ -113,10 +113,13 @@
       <div class="track-card">
         <div class="track-head">
           <div>
-            <p class="eyebrow eyebrow-grey" data-i18n="trackLabel">Fuatilia mzigo</p>
+            <p class="eyebrow eyebrow-grey">
+              <span class="demo-badge" data-i18n="demoBadge">Mfumo wa majaribio</span>
+              <span data-i18n="trackLabel">Fuatilia mzigo</span>
+            </p>
             <h2 id="track-title" class="track-title" data-i18n="trackTitle">Mzigo wako umefika wapi?</h2>
           </div>
-          <p class="track-hint" data-i18n="trackHint">Jaribu: IE-4821, IE-7390 au IE-1156</p>
+          <p class="track-hint" data-i18n="trackHint">Namba za majaribio pekee — bonyeza mojawapo hapa chini.</p>
         </div>
 
         <form class="track-form" id="track-form" novalidate>
@@ -125,15 +128,31 @@
           <button class="btn btn-dark btn-square" type="submit" data-i18n="trackBtn">Fuatilia</button>
         </form>
 
-        <p class="track-error" id="track-error" hidden data-i18n="trackNotFound">Namba hii haipo kwenye mfumo. Piga 0690 500 000 tukusaidie.</p>
+        <div class="track-chips" id="track-chips"></div>
+
+        <p class="track-error" id="track-error" hidden data-i18n="trackNotFound">Namba hii haipo kwenye mfumo wa majaribio. Piga 0690 500 000 kwa mzigo halisi.</p>
 
         <div class="track-result" id="track-result" hidden>
-          <div class="track-meta">
-            <div><span class="micro" data-i18n="trackRoute">Safari</span><strong id="track-route"></strong></div>
-            <div><span class="micro" data-i18n="trackStatus">Hali</span><strong id="track-status" class="status"></strong></div>
-            <div><span class="micro" data-i18n="trackReceiver">Mpokeaji</span><span id="track-receiver" class="receiver"></span></div>
+          <div class="track-progress">
+            <div class="track-progress-head">
+              <div>
+                <span class="micro" data-i18n="trackRoute">Safari</span>
+                <strong id="track-route"></strong>
+              </div>
+              <span id="track-status" class="status-pill"></span>
+            </div>
+            <div class="track-bar"><span id="track-bar-fill"></span></div>
+            <ol class="track-stages" id="track-stages"></ol>
           </div>
-          <ol class="timeline" id="track-events"></ol>
+
+          <div class="track-body">
+            <div class="track-meta">
+              <div><span class="micro" data-i18n="trackReceiver">Mpokeaji</span><span id="track-receiver" class="receiver"></span></div>
+              <div><span class="micro" data-i18n="trackEta">Inatarajiwa</span><span id="track-eta" class="receiver"></span></div>
+              <div><span class="micro" data-i18n="trackCode">Namba ya mzigo</span><span id="track-code" class="receiver code"></span></div>
+            </div>
+            <ol class="timeline" id="track-events"></ol>
+          </div>
         </div>
       </div>
     </div>
@@ -416,6 +435,39 @@
   </div>
 </div>
 
+<!-- I Talk — automated assistant. Answers common questions and hands anything
+     it cannot answer to WhatsApp. No model API is called from this page. -->
+<button class="italk-launch" id="italk-launch" type="button" aria-expanded="false" aria-controls="italk-panel">
+  <span class="italk-launch-dot" aria-hidden="true"></span>
+  <span class="italk-launch-text">I&nbsp;Talk</span>
+</button>
+
+<section class="italk" id="italk-panel" aria-labelledby="italk-title" hidden>
+  <header class="italk-head">
+    <div>
+      <h2 id="italk-title">I Talk</h2>
+      <p data-i18n="italkTagline">Msaidizi wa Intelligence Express</p>
+    </div>
+    <button class="italk-close" id="italk-close" type="button" aria-label="Funga">×</button>
+  </header>
+
+  <div class="italk-log" id="italk-log" role="log" aria-live="polite" aria-atomic="false"></div>
+
+  <div class="italk-chips" id="italk-chips"></div>
+
+  <form class="italk-form" id="italk-form" novalidate>
+    <label class="sr-only" for="italk-input" data-i18n="italkInputLabel">Andika ujumbe</label>
+    <input id="italk-input" name="message" type="text" autocomplete="off"
+           data-placeholder-i18n="italkPlaceholder" placeholder="Andika swali lako..." />
+    <button class="italk-send" type="submit" aria-label="Tuma">
+      <span aria-hidden="true">→</span>
+    </button>
+  </form>
+
+  <p class="italk-note" data-i18n="italkNote">Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.</p>
+</section>
+
 <script src="js/app.js" defer></script>
+<script src="js/italk.js" defer></script>
 </body>
 </html>

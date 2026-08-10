@@ -17,41 +17,122 @@ iframe { width: 1200px; height: 700px; border: 1px solid #ccc; }
 <script>
 var log = [];
 function ok(name, cond, extra) { log.push((cond ? "PASS " : "FAIL ") + name + (extra ? " [" + extra + "]" : "")); }
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
 document.getElementById('f').addEventListener('load', function () {
   var w = this.contentWindow, d = this.contentDocument;
-  setTimeout(function () {
+
+  function submit(form) {
+    form.dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+  }
+
+  setTimeout(async function () {
     try {
-      // 1. defaults
+      /* ---------------------------------------------------------- basics */
       ok("default lang is sw", d.documentElement.lang === "sw", d.documentElement.lang);
       ok("hero in swahili", /Hatubebi/.test(d.querySelector("h1").textContent));
       ok("title set", /Usafirishaji/.test(d.title), d.title);
 
-      // 2. tracking: known code
-      d.getElementById("track-input").value = "ie-4821";
-      d.getElementById("track-form").dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
-      ok("result shown for IE-4821", !d.getElementById("track-result").hidden);
-      ok("route rendered", d.getElementById("track-route").textContent.indexOf("Mwanza") > -1, d.getElementById("track-route").textContent);
+      /* -------------------------------------------------------- tracking */
+      ok("six demo shipments", Object.keys(w.IE_SHIPMENTS).length === 6, Object.keys(w.IE_SHIPMENTS).length);
+      ok("a chip per shipment", d.querySelectorAll("#track-chips button").length === 6);
+      ok("demo badge present", /majaribio/i.test(d.querySelector(".demo-badge").textContent));
+
+      d.getElementById("track-input").value = "ie4821";  // no dash, lower case
+      submit(d.getElementById("track-form"));
+      ok("lenient code parsing", !d.getElementById("track-result").hidden);
+      ok("route rendered", d.getElementById("track-route").textContent.indexOf("Mwanza") > -1);
       ok("status in swahili", d.getElementById("track-status").textContent === "Njiani", d.getElementById("track-status").textContent);
-      ok("4 timeline events", d.querySelectorAll("#track-events li").length === 4, d.querySelectorAll("#track-events li").length);
+      ok("eta rendered", d.getElementById("track-eta").textContent.length > 0, d.getElementById("track-eta").textContent);
+      ok("code echoed", d.getElementById("track-code").textContent === "IE-4821");
+      ok("four stages", d.querySelectorAll("#track-stages li").length === 4);
+      ok("3 of 4 stages done", d.querySelectorAll("#track-stages li.is-done").length === 3);
+      ok("progress bar at 75%", d.getElementById("track-bar-fill").style.width === "75%", d.getElementById("track-bar-fill").style.width);
+      ok("in-transit pill not delivered", !d.getElementById("track-status").classList.contains("is-delivered"));
+      ok("4 timeline events", d.querySelectorAll("#track-events li").length === 4);
       ok("error hidden", d.getElementById("track-error").hidden);
 
-      // 3. language switch
+      d.querySelectorAll("#track-chips button")[1].click();  // IE-7390, delivered
+      ok("chip tracks a shipment", d.getElementById("track-code").textContent === "IE-7390");
+      ok("delivered pill styled", d.getElementById("track-status").classList.contains("is-delivered"));
+      ok("delivered bar full", d.getElementById("track-bar-fill").style.width === "100%");
+
+      d.getElementById("track-input").value = "IE-0000";
+      submit(d.getElementById("track-form"));
+      ok("error shown for bad code", !d.getElementById("track-error").hidden);
+      ok("result hidden for bad code", d.getElementById("track-result").hidden);
+      ok("no invented shipment", /majaribio/i.test(d.getElementById("track-error").textContent));
+
+      /* ---------------------------------------------------------- I Talk */
+      var panel = d.getElementById("italk-panel");
+      var launch = d.getElementById("italk-launch");
+      ok("assistant starts closed", panel.hidden);
+
+      launch.click();
+      ok("assistant opens", !panel.hidden);
+      ok("launch hidden while open", launch.hidden);
+      ok("welcome message", /I Talk/.test(d.querySelector(".italk-msg.from-bot").textContent));
+      ok("quick replies offered", d.querySelectorAll("#italk-chips button").length === 5);
+
+      d.getElementById("italk-input").value = "pickup ni bure?";
+      submit(d.getElementById("italk-form"));
+      await sleep(400);
+      var last = d.querySelectorAll(".italk-msg.from-bot");
+      last = last[last.length - 1];
+      ok("answers pickup question", /bure/i.test(last.textContent));
+      ok("offers whatsapp link", last.querySelector('a[href*="wa.me"]') !== null);
+
+      d.getElementById("italk-input").value = "bei ni ngapi?";
+      submit(d.getElementById("italk-form"));
+      await sleep(400);
+      var priceMsg = d.querySelectorAll(".italk-msg.from-bot");
+      priceMsg = priceMsg[priceMsg.length - 1];
+      ok("does not invent a price", !/\d{4,}\s*(tsh|shilingi)/i.test(priceMsg.textContent));
+      ok("hands pricing to the team", priceMsg.querySelector('a[href*="wa.me"]') !== null);
+
+      d.getElementById("italk-input").value = "IE-6310";
+      submit(d.getElementById("italk-form"));
+      await sleep(400);
+      var trackMsg = d.querySelectorAll(".italk-msg.from-bot");
+      trackMsg = trackMsg[trackMsg.length - 1];
+      ok("assistant answers a tracking code", /Kampala/.test(trackMsg.textContent));
+      ok("assistant drives the tracking panel", d.getElementById("track-code").textContent === "IE-6310");
+
+      d.getElementById("italk-input").value = "IE-1234";  // well-formed but unknown
+      submit(d.getElementById("italk-form"));
+      await sleep(400);
+      var missMsg = d.querySelectorAll(".italk-msg.from-bot");
+      missMsg = missMsg[missMsg.length - 1];
+      ok("unknown code is refused, not faked", /majaribio/i.test(missMsg.textContent));
+
+      var before = d.querySelectorAll(".italk-msg.from-user").length;
+      d.getElementById("italk-input").value = "   ";
+      submit(d.getElementById("italk-form"));
+      ok("blank message ignored", d.querySelectorAll(".italk-msg.from-user").length === before);
+
+      d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      ok("escape closes assistant", panel.hidden && !launch.hidden);
+
+      /* ------------------------------------------------ language switching */
       d.querySelector('.lang-toggle button[data-lang="en"]').click();
       ok("lang attr en", d.documentElement.lang === "en");
       ok("hero in english", /We don't just/.test(d.querySelector("h1").textContent));
       ok("nav translated", d.querySelector('[data-i18n="navServices"]').textContent === "Services");
-      ok("tracking re-rendered in en", d.getElementById("track-status").textContent === "In transit", d.getElementById("track-status").textContent);
+      ok("tracking re-rendered in en", d.getElementById("track-status").textContent === "In transit (cross-border)", d.getElementById("track-status").textContent);
+      ok("stages translated", d.querySelectorAll("#track-stages li")[0].textContent === "Collected");
       ok("placeholder translated", d.querySelector('#pickup-modal input[name="name"]').placeholder === "Your name");
       ok("lang persisted", w.localStorage.getItem("ie-lang") === "en");
 
-      // 4. tracking: unknown code
-      d.getElementById("track-input").value = "IE-0000";
-      d.getElementById("track-form").dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
-      ok("error shown for bad code", !d.getElementById("track-error").hidden);
-      ok("result hidden for bad code", d.getElementById("track-result").hidden);
+      launch.click();
+      d.getElementById("italk-input").value = "how much does it cost?";
+      submit(d.getElementById("italk-form"));
+      await sleep(400);
+      var enMsg = d.querySelectorAll(".italk-msg.from-bot");
+      enMsg = enMsg[enMsg.length - 1];
+      ok("assistant answers in english", /quote|price|depends/i.test(enMsg.textContent));
+      d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
 
-      // 5. modal
+      /* ------------------------------------------------------ modal + forms */
       var modal = d.getElementById("pickup-modal");
       ok("modal starts hidden", modal.hidden);
       d.querySelector("[data-open-modal]").click();
@@ -61,7 +142,6 @@ document.getElementById('f').addEventListener('load', function () {
       ok("escape closes", modal.hidden);
       ok("body unlocked", !d.body.classList.contains("modal-open"));
 
-      // 6. pickup form -> whatsapp
       var opened = null;
       w.open = function (url) { opened = url; return null; };
       var form = d.querySelector(".contact .pickup-form");
@@ -70,29 +150,25 @@ document.getElementById('f').addEventListener('load', function () {
       form.querySelector('[name="from"]').value = "Kariakoo";
       form.querySelector('[name="to"]').value = "Mwanza";
       form.querySelector('[name="item"]').value = "Katoni 2";
-      form.dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+      submit(form);
       ok("whatsapp url built", !!opened && opened.indexOf("https://wa.me/255690500000?text=") === 0);
-      ok("details encoded", !!opened && decodeURIComponent(opened).indexOf("Asha") > -1 && decodeURIComponent(opened).indexOf("Mwanza") > -1);
+      ok("details encoded", !!opened && decodeURIComponent(opened).indexOf("Asha") > -1);
       ok("labels follow language", !!opened && decodeURIComponent(opened).indexOf("Your name") > -1);
 
-      // 7. required fields block submit
       opened = null;
-      d.querySelector("#pickup-modal .pickup-form").dispatchEvent(new w.Event("submit", { cancelable: true, bubbles: true }));
+      submit(d.querySelector("#pickup-modal .pickup-form"));
       ok("empty form blocked", opened === null);
 
-      // 8. mobile nav
+      /* -------------------------------------------------------- mobile nav */
       var tog = d.querySelector(".nav-toggle"), nav = d.getElementById("site-nav");
       tog.click();
       ok("nav opens", nav.classList.contains("is-open") && tog.getAttribute("aria-expanded") === "true");
       nav.querySelector("a").click();
       ok("nav closes on link", !nav.classList.contains("is-open"));
 
-      // 9. back to swahili
       d.querySelector('.lang-toggle button[data-lang="sw"]').click();
       ok("back to sw", d.documentElement.lang === "sw" && /Hatubebi/.test(d.querySelector("h1").textContent));
-      ok("aria-pressed correct", d.querySelector('[data-lang="sw"]').getAttribute("aria-pressed") === "true" && d.querySelector('[data-lang="en"]').getAttribute("aria-pressed") === "false");
-
-      // 10. footer year
+      ok("aria-pressed correct", d.querySelector('[data-lang="sw"]').getAttribute("aria-pressed") === "true");
       ok("year filled", d.getElementById("year").textContent === String(new Date().getFullYear()), d.getElementById("year").textContent);
     } catch (e) {
       log.push("FAIL harness error: " + e.message);

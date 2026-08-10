@@ -15,9 +15,11 @@ open `index.html` and it runs.
 index.html                  the whole page
 css/styles.css              styles (design tokens at the top of the file)
 js/app.js                   language switching, tracking, forms, modal, nav
+js/italk.js                 the I Talk assistant
 assets/                     photography and logo
 content/brand-copy.md       the original Swahili launch copy the site is built from
 tests/interactions.html     browser test page for the interactive bits
+render.yaml                 Render deployment blueprint
 ```
 
 ## Features
@@ -27,10 +29,20 @@ tests/interactions.html     browser test page for the interactive bits
   `localStorage`, and falls back to the browser language on a first visit.
 - **Pickup booking.** Both the inline form and the modal build a pre-filled
   WhatsApp message to `+255 690 500 000` — no backend, nothing to host or secure.
-- **Shipment tracking (demo).** `SHIPMENTS` in `js/app.js` is a small hard-coded
-  dataset — `IE-4821`, `IE-7390`, `IE-1156` — so the flow can be demonstrated.
-  Wiring it to a real system means replacing the lookup in `initTracking()` with a
-  `fetch()` to an API that returns the same shape.
+- **Shipment tracking (demo).** Six sample shipments in `SHIPMENTS`
+  (`js/app.js`), each with a route, a 1–4 stage that drives the progress bar, a
+  status, an ETA and a timeline. Tap a code chip or type one — `ie4821`,
+  `IE 4821` and `IE-4821` all resolve.
+
+  It is deliberately a **fixed set, not a generator**, and every unknown code
+  returns "not found". A generator would hand a real customer invented status
+  for their real package, which is worse than no tracking at all. The panel
+  carries a *Mfumo wa majaribio / Demo system* badge for the same reason.
+  Wiring it to a real system means replacing `lookup()` in `js/app.js` with a
+  `fetch()` to an API returning the same shape, and dropping the badge.
+- **I Talk — the assistant.** A floating helper that answers common questions in
+  Swahili and English, looks up a tracking code inline (it drives the tracking
+  panel on the page), and hands anything else to WhatsApp. See below.
 - **Responsive from 280px to ultrawide.** Verified with no horizontal overflow at
   280, 320, 360, 390, 414, 480, 540, 600, 768, 834, 900, 1024, 1180, 1280, 1440,
   1600, 1920 and 2560 CSS pixels. Three things make that hold: grid floors are
@@ -52,17 +64,74 @@ python -m http.server 8000
 # then visit http://localhost:8000
 ```
 
+## I Talk
+
+`js/italk.js` is a **rule-based assistant, not a language model.** It matches the
+visitor's message against a keyword-scored list of topics in `TOPICS` and replies
+from written Swahili and English answers. It follows the site's SW/EN toggle, and
+recognises a tracking code anywhere in a message.
+
+The rule its answers follow: **never invent a fact about the business.** Prices,
+transit times, insurance terms and opening hours are not guessed — those answers
+hand the visitor to WhatsApp or the phone. Adding a topic means adding one entry
+to `TOPICS` with `keys` (match terms, both languages) and `sw` / `en` answers,
+plus optional `actions: ["whatsapp", "call"]`.
+
+### Making it a real AI assistant
+
+It is rule-based for one hard reason: **this is a static site, and a static site
+cannot hold an API key.** Anything in `js/` is downloaded by every visitor, so a
+key put there is a published key — someone will find it and spend your credit.
+
+Giving I Talk a real model means adding a small server that holds the key:
+
+1. Add a **Web Service** on Render (Node) alongside this static site, with
+   `ANTHROPIC_API_KEY` set as an environment variable in the dashboard — never in
+   this repo.
+2. That service exposes one endpoint that takes the visitor's message, calls
+   Claude with a system prompt describing Intelligence Express, and returns the
+   text.
+
+```js
+// server.js on the Web Service — the key stays here, never in the browser
+import Anthropic from "@anthropic-ai/sdk";
+const client = new Anthropic();               // reads ANTHROPIC_API_KEY
+
+app.post("/api/italk", async (req, res) => {
+  const message = await client.messages.create({
+    model: "claude-opus-5",
+    max_tokens: 1024,
+    system: "You are I Talk, the assistant for Intelligence Express, a cargo " +
+            "and parcel company in Kariakoo, Dar es Salaam. Answer in the " +
+            "language the customer writes in. Never quote a price or a transit " +
+            "time — direct those to WhatsApp on +255 690 500 000.",
+    messages: [{ role: "user", content: String(req.body.message).slice(0, 2000) }],
+  });
+  res.json({ reply: message.content.find(b => b.type === "text").text });
+});
+```
+
+3. In `js/italk.js`, replace the `answer()` call in `send()` with a `fetch()` to
+   that endpoint, keeping the current rule-based answers as the offline fallback.
+
+Keep the "never invent a price" instruction in the system prompt — a model will
+happily invent one otherwise. Add rate limiting on the endpoint before launch, or
+one visitor's script can run up your bill.
+
 ## Tests
 
 `tests/interactions.html` drives the real page in an iframe and checks the parts
 that can silently break: language switching (including re-rendering a tracking
-result in the new language), the tracking lookup for both known and unknown
-codes, modal open/Escape/scroll-lock, the WhatsApp message the forms build,
-required-field validation, and the mobile nav. Serve the repo and open it:
+result in the new language), the tracking lookup — lenient code parsing, stage
+count, progress-bar width, delivered styling, and that an unknown code is
+*refused rather than faked* — the assistant's answers in both languages, that it
+declines to invent a price, that a tracking code in chat drives the panel, modal
+open/Escape/scroll-lock, the WhatsApp message the forms build, required-field
+validation, and the mobile nav. Serve the repo and open it:
 
 ```sh
 python -m http.server 8000
-# http://localhost:8000/tests/interactions.html  → 30/30
+# http://localhost:8000/tests/interactions.html  → 59/59
 ```
 
 ## Editing content

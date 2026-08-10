@@ -488,6 +488,111 @@ ul, ol, dl, dd { margin: 0; padding: 0; list-style: none; }
 .timeline-title { font-weight: 600; font-size: 16px; }
 .timeline-meta { font-size: 14px; color: var(--muted-2); margin-top: 2px; }
 
+/* The tracking data is a demo set, and the badge has to say so plainly —
+   nobody should mistake a sample shipment for their real one. */
+.demo-badge {
+  display: inline-block;
+  background: rgba(23, 178, 166, 0.14);
+  color: #0F7F76;
+  border-radius: 999px;
+  padding: 3px 9px;
+  margin-right: 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.track-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.track-chips button {
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+.track-chips button:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.track-progress {
+  margin-top: 22px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+.track-progress-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.track-progress-head > div { display: grid; gap: 3px; }
+.track-progress-head strong { font-family: var(--display); font-weight: 800; font-size: 18px; }
+
+.status-pill {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  background: rgba(245, 96, 61, 0.12);
+  color: var(--rust);
+  white-space: nowrap;
+}
+.status-pill.is-delivered { background: rgba(23, 178, 166, 0.14); color: #0F7F76; }
+
+.track-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(22, 24, 27, 0.1);
+  margin-top: 18px;
+  overflow: hidden;
+}
+.track-bar span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  border-radius: 999px;
+  background: var(--orange);
+  transition: width 420ms ease;
+}
+.track-bar span.is-delivered { background: var(--teal); }
+
+.track-stages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.track-stages li {
+  min-width: 0;                 /* grid items default to their word width */
+  overflow-wrap: break-word;
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.track-stages li.is-done { color: var(--ink); font-weight: 600; }
+
+.track-body {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 30px;
+}
+.receiver.code { font-family: var(--display); font-weight: 800; letter-spacing: 0.06em; }
+
 /* ---------- Services ---------- */
 
 .services { padding: 60px 0 90px; }
@@ -896,6 +1001,192 @@ body.modal-open { overflow: hidden; }
   to { opacity: 1; transform: none; }
 }
 
+/* ---------- I Talk assistant ---------- */
+
+.italk-launch {
+  position: fixed;
+  right: clamp(14px, 3vw, 26px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 22px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(22, 24, 27, 0.28);
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+.italk-launch:hover { background: var(--rust); }
+.italk-launch:active { transform: translateY(1px); }
+.italk-launch-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--teal);
+  flex: 0 0 auto;
+}
+
+.italk {
+  position: fixed;
+  right: clamp(14px, 3vw, 26px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 95;
+  width: min(380px, calc(100vw - 28px));
+  max-height: min(620px, calc(100dvh - 28px));
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 26px 70px rgba(22, 24, 27, 0.3);
+  animation: ie-rise 200ms ease-out;
+}
+
+.italk-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 18px 14px;
+  background: var(--ink);
+  color: #fff;
+}
+.italk-head h2 {
+  font-weight: 900;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+.italk-head p { font-size: 13px; color: rgba(255, 255, 255, 0.66); margin-top: 2px; }
+
+.italk-close {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: background-color 160ms ease;
+}
+.italk-close:hover { background: rgba(255, 255, 255, 0.16); }
+
+.italk-log {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.italk-msg {
+  max-width: 88%;
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+}
+.italk-msg.from-bot {
+  justify-self: start;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 5px;
+  color: var(--ink);
+}
+.italk-msg.from-user {
+  justify-self: end;
+  background: var(--ink);
+  color: #fff;
+  border-bottom-right-radius: 5px;
+}
+.italk-msg a { color: var(--rust); text-decoration: underline; }
+.italk-msg.from-user a { color: #fff; }
+
+.italk-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 0 18px 12px;
+}
+.italk-chips:empty { display: none; }
+.italk-chips button {
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink-soft);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-family: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+.italk-chips button:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+.italk-form {
+  display: flex;
+  gap: 8px;
+  padding: 0 18px 12px;
+}
+.italk-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 15px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #fff;
+  font-family: var(--text);
+  font-size: 16px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 160ms ease;
+}
+.italk-form input:focus { border-color: var(--orange); }
+
+.italk-send {
+  flex: 0 0 auto;
+  width: 44px; height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+.italk-send:hover { background: var(--ink); }
+
+.italk-note {
+  padding: 0 18px 16px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted-2);
+}
+
+body.italk-open { overflow: hidden; }
+
+@media (max-width: 560px) {
+  .italk {
+    right: 8px; left: 8px; bottom: 8px;
+    width: auto;
+    max-height: calc(100dvh - 16px);
+  }
+  .italk-launch { padding: 13px 18px; font-size: 14px; }
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 880px) {
@@ -948,6 +1239,8 @@ body.modal-open { overflow: hidden; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
   .stats { gap: 18px 26px; }
   .steps { gap: 18px; }
+  /* Four stage labels side by side leave no room for the words on a phone. */
+  .track-stages { grid-template-columns: repeat(2, 1fr); row-gap: 6px; }
 }
 
 /* Every team photo is a 3:4 portrait. Once the layout narrows, the fixed-height
