@@ -43,9 +43,12 @@ render.yaml                 Render deployment blueprint
 - **I Talk — the assistant.** A floating helper that answers common questions in
   Swahili and English, looks up a tracking code inline (it drives the tracking
   panel on the page), and hands anything else to WhatsApp. See below.
-- **Responsive from 280px to ultrawide.** Verified with no horizontal overflow at
-  280, 320, 360, 390, 414, 480, 540, 600, 768, 834, 900, 1024, 1180, 1280, 1440,
-  1600, 1920 and 2560 CSS pixels. Three things make that hold: grid floors are
+- **Responsive from 280px to ultrawide.** Checked at 24 widths from 280 to 2560
+  CSS pixels, in five states each (at rest, tracking a shipment, assistant open,
+  booking modal open, menu open) — 111 checks covering horizontal overflow,
+  clipped text and boxes, header pieces overlapping, the floating assistant
+  covering a call to action, tap-target height, and grid rhythm (no orphan card
+  row, no empty gallery row). Three things make that hold: grid floors are
   written `minmax(min(280px, 100%), 1fr)` so a track never exceeds a narrow
   viewport; form controls carry `min-width: 0` (an `<input>` otherwise claims a
   ~213px intrinsic width and bursts its grid track); and headings use
