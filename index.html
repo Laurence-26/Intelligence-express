@@ -21,10 +21,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Barlow:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
-<!-- Do NOT add a ?v= query to these URLs: Render's static server treats the
-     query as part of the filename and returns 404, leaving the page unstyled.
-     Freshness is handled by the no-cache header on css/ and js/ in render.yaml;
-     to force an update, rename the file instead. -->
+<!-- Keep these URLs plain. A ?v= cache-buster was tried here and the deployed
+     page was served unstyled: the new HTML went live while the versioned URL
+     was still returning 404, so the stylesheet was unreachable in that window.
+     Freshness is handled by the no-cache header on css/ and js/ in render.yaml.
+     To force an update past a cache, rename the file rather than adding a query. -->
 <link rel="stylesheet" href="css/styles.css" />
 
 <script type="application/ld+json">
