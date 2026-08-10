@@ -21,12 +21,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Barlow:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
-<!-- Keep these URLs plain. A ?v= cache-buster was tried here and the deployed
-     page was served unstyled: the new HTML went live while the versioned URL
-     was still returning 404, so the stylesheet was unreachable in that window.
-     Freshness is handled by the no-cache header on css/ and js/ in render.yaml.
-     To force an update past a cache, rename the file rather than adding a query. -->
-<link rel="stylesheet" href="css/styles.css" />
+<!-- The .v2 in these filenames is a cache buster. Browsers that loaded the site
+     before the no-cache header existed hold the old stylesheet for up to a day
+     and will not revalidate; a new path is the only thing they must re-fetch.
+     Use a rename, never a ?v= query — a query left the deployed page unstyled
+     while the versioned URL was still 404ing. Bump to .v3 only if this happens
+     again; the no-cache header on css/ and js/ makes it unnecessary from here. -->
+<link rel="stylesheet" href="css/styles.v2.css" />
 
 <script type="application/ld+json">
 {
@@ -473,7 +474,7 @@
   <p class="ichat-note" data-i18n="ichatNote">Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.</p>
 </section>
 
-<script src="js/app.js" defer></script>
+<script src="js/app.v2.js" defer></script>
 <script src="js/ichat.js" defer></script>
 </body>
 </html>

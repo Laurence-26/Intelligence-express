@@ -13,24 +13,26 @@ open `index.html` and it runs.
 
 ```
 index.html                  the whole page
-css/styles.css              styles (design tokens at the top of the file)
-js/app.js                   language switching, tracking, forms, modal, nav
+css/styles.v2.css           styles (design tokens at the top of the file)
+js/app.v2.js                language switching, tracking, forms, modal, nav
 js/ichat.js                 the I Chat assistant
 assets/                     photography and logo
 content/brand-copy.md       the original Swahili launch copy the site is built from
 tests/interactions.html     browser test page for the interactive bits
 render.yaml                 Render deployment blueprint
+
+The `.v2` suffixes are cache busters — see Deploying below.
 ```
 
 ## Features
 
 - **Bilingual, Swahili first.** Every translatable string carries a `data-i18n`
-  key; `js/app.js` holds the `sw` / `en` dictionaries. The choice is remembered in
+  key; `js/app.v2.js` holds the `sw` / `en` dictionaries. The choice is remembered in
   `localStorage`, and falls back to the browser language on a first visit.
 - **Pickup booking.** Both the inline form and the modal build a pre-filled
   WhatsApp message to `+255 690 500 000` — no backend, nothing to host or secure.
 - **Shipment tracking (demo).** Six sample shipments in `SHIPMENTS`
-  (`js/app.js`), each with a route, a 1–4 stage that drives the progress bar, a
+  (`js/app.v2.js`), each with a route, a 1–4 stage that drives the progress bar, a
   status, an ETA and a timeline. Tap a code chip or type one — `ie4821`,
   `IE 4821` and `IE-4821` all resolve.
 
@@ -38,7 +40,7 @@ render.yaml                 Render deployment blueprint
   returns "not found". A generator would hand a real customer invented status
   for their real package, which is worse than no tracking at all. The panel
   carries a *Mfumo wa majaribio / Demo system* badge for the same reason.
-  Wiring it to a real system means replacing `lookup()` in `js/app.js` with a
+  Wiring it to a real system means replacing `lookup()` in `js/app.v2.js` with a
   `fetch()` to an API returning the same shape, and dropping the badge.
 - **I Chat — the assistant.** A floating helper that answers common questions in
   Swahili and English, looks up a tracking code inline (it drives the tracking
@@ -140,12 +142,12 @@ python -m http.server 8000
 ## Editing content
 
 - **Text:** change it in `index.html` (Swahili, what the page ships with) *and* in
-  the matching `sw` key in `js/app.js`. The English copy lives only in the `en`
+  the matching `sw` key in `js/app.v2.js`. The English copy lives only in the `en`
   dictionary. Keys are shared, so both must exist or the switch will leave a
   string untranslated.
 - **Phone / WhatsApp:** the number appears in `index.html` (`tel:` and `wa.me`
-  links, JSON-LD) and as `WHATSAPP` at the top of `js/app.js`.
-- **Colours and spacing:** the `:root` custom properties in `css/styles.css`.
+  links, JSON-LD) and as `WHATSAPP` at the top of `js/app.v2.js`.
+- **Colours and spacing:** the `:root` custom properties in `css/styles.v2.css`.
 - **Photos:** drop replacements into `assets/` keeping the same filenames, or
   update the `src` attributes.
 
@@ -177,12 +179,16 @@ every response, and its caching is deliberate:
   on a phone connection stay quick, and a swapped photo still appears within the
   hour.
 
-**Avoid `?v=` query strings on the stylesheet and script URLs.** One was tried,
-and during the deploy the new HTML went live while the versioned URL was still
-returning 404 — the page loaded completely unstyled until it resolved. `no-cache`
-already handles freshness, so the buster added risk and no benefit. If a change
-must reach returning visitors immediately, rename the file (`styles.v3.css`) and
-update the tag — a different *path* is in nobody's cache and always resolves.
+**Cache busting: rename the file, never add a `?v=` query.** A query string was
+tried once and the deployed page went out completely unstyled — the new HTML was
+live while the versioned URL was still returning 404. A different *path*
+(`styles.v2.css` → `styles.v3.css`) is in nobody's cache and always resolves.
+
+That is why the stylesheet and main script carry a `.v2` suffix: browsers that
+loaded the site before the `no-cache` header existed hold the old files for up to
+a day and never revalidate, so after the assistant's CSS classes were renamed
+they paired old CSS with new markup and the chat panel rendered as raw text. Now
+that `no-cache` is live this should not recur — bump to `.v3` only if it does.
 
 ### Anywhere else
 
