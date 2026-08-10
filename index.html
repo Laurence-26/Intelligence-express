@@ -21,10 +21,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Barlow:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
-<!-- ?v= is a cache buster: phones that cached the old stylesheet under the
-     previous one-day Cache-Control header need a new URL to fetch it again.
-     Bump it whenever a change must reach returning visitors immediately. -->
-<link rel="stylesheet" href="css/styles.css?v=2" />
+<!-- Do NOT add a ?v= query to these URLs: Render's static server treats the
+     query as part of the filename and returns 404, leaving the page unstyled.
+     Freshness is handled by the no-cache header on css/ and js/ in render.yaml;
+     to force an update, rename the file instead. -->
+<link rel="stylesheet" href="css/styles.css" />
 
 <script type="application/ld+json">
 {
@@ -471,7 +472,7 @@
   <p class="ichat-note" data-i18n="ichatNote">Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.</p>
 </section>
 
-<script src="js/app.js?v=2" defer></script>
-<script src="js/ichat.js?v=2" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/ichat.js" defer></script>
 </body>
 </html>

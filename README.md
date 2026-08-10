@@ -177,8 +177,11 @@ every response, and its caching is deliberate:
   on a phone connection stay quick, and a swapped photo still appears within the
   hour.
 
-If a change must reach returning visitors *immediately*, bump the `?v=` on the
-stylesheet and script tags in `index.html` — a new URL is in nobody's cache.
+**Do not add a `?v=` query string to the stylesheet or script URLs.** Render's
+static server treats the query as part of the filename and returns 404, which
+leaves the page completely unstyled. If a change must reach returning visitors
+immediately, rename the file (`styles.v3.css`) and update the tag — a different
+path is in nobody's cache. Under `no-cache` this is rarely needed.
 
 ### Anywhere else
 
