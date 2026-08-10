@@ -948,7 +948,26 @@ body.modal-open { overflow: hidden; }
   .hero h1 { font-size: clamp(32px, 9vw, 44px); }
   .stats { gap: 18px 26px; }
   .steps { gap: 18px; }
-  .gallery { grid-auto-rows: minmax(180px, 220px); }
+}
+
+/* Every team photo is a 3:4 portrait. Once the layout narrows, the fixed-height
+   cells turn landscape and object-fit: cover cuts people's heads and feet off.
+   From here down the photos keep their own proportions instead.
+   These blocks must stay after the 880px and 480px ones, whose cell heights
+   they override. */
+@media (max-width: 880px) {
+  .why-img { height: auto; }
+  .gallery { grid-auto-rows: auto; }
+  .gallery img {
+    aspect-ratio: 3 / 4;
+    height: auto;
+  }
+  .gallery-tall { grid-row: span 1; }
+  .gallery-card { grid-column: 1 / -1; }
+}
+
+@media (max-width: 700px) {
+  .gallery { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Very narrow (folded phones, 280–340px): drop the wordmark, keep the logo.
