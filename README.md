@@ -131,7 +131,7 @@ validation, and the mobile nav. Serve the repo and open it:
 
 ```sh
 python -m http.server 8000
-# http://localhost:8000/tests/interactions.html  → 59/59
+# http://localhost:8000/tests/interactions.html  → 67/67
 ```
 
 ## Editing content

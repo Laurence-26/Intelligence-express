@@ -161,10 +161,38 @@ document.getElementById('f').addEventListener('load', function () {
 
       /* -------------------------------------------------------- mobile nav */
       var tog = d.querySelector(".nav-toggle"), nav = d.getElementById("site-nav");
+      var frame = document.getElementById("f");
+      frame.style.width = "390px";            // phone width, so the menu rules apply
+      await sleep(80);
+
+      ok("header row wraps", w.getComputedStyle(d.querySelector(".header-inner")).flexWrap === "wrap");
+
       tog.click();
       ok("nav opens", nav.classList.contains("is-open") && tog.getAttribute("aria-expanded") === "true");
+
+      // The regression this guards: the open menu used to sit on top of the logo.
+      var navBox = nav.getBoundingClientRect();
+      var brandBox = d.querySelector(".brand").getBoundingClientRect();
+      ok("menu clears the brand", navBox.top >= brandBox.bottom - 1,
+         Math.round(navBox.top) + " vs " + Math.round(brandBox.bottom));
+      ok("menu spans the header", Math.round(navBox.width) > 300, Math.round(navBox.width));
+      ok("cta moves into the menu", nav.querySelector(".nav-cta") !== null);
+      ok("cta visible on mobile", w.getComputedStyle(nav.querySelector(".nav-cta")).display !== "none");
+
+      d.body.click();
+      ok("outside tap closes nav", !nav.classList.contains("is-open"));
+
+      tog.click();
       nav.querySelector("a").click();
       ok("nav closes on link", !nav.classList.contains("is-open"));
+
+      tog.click();
+      d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      ok("escape closes nav", !nav.classList.contains("is-open"));
+
+      frame.style.width = "1200px";
+      await sleep(60);
+      ok("cta hidden on desktop", w.getComputedStyle(nav.querySelector(".nav-cta")).display === "none");
 
       d.querySelector('.lang-toggle button[data-lang="sw"]').click();
       ok("back to sw", d.documentElement.lang === "sw" && /Hatubebi/.test(d.querySelector("h1").textContent));

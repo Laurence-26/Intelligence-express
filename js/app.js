@@ -642,16 +642,31 @@
     var nav = $("#site-nav");
     if (!toggle || !nav) return;
 
-    toggle.addEventListener("click", function () {
-      var open = nav.classList.toggle("is-open");
+    function setOpen(open) {
+      nav.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", String(open));
+    }
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(!nav.classList.contains("is-open"));
     });
 
     $$("a", nav).forEach(function (link) {
-      link.addEventListener("click", function () {
-        nav.classList.remove("is-open");
-        toggle.setAttribute("aria-expanded", "false");
-      });
+      link.addEventListener("click", function () { setOpen(false); });
+    });
+
+    // Tapping the page or pressing Escape closes the menu, as a menu should.
+    document.addEventListener("click", function (e) {
+      if (!nav.classList.contains("is-open")) return;
+      if (!nav.contains(e.target) && e.target !== toggle) setOpen(false);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && nav.classList.contains("is-open")) {
+        setOpen(false);
+        toggle.focus();
+      }
     });
   }
 
