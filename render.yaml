@@ -22,14 +22,19 @@ services:
         name: X-Frame-Options
         value: SAMEORIGIN
 
-      # Photos and the stylesheet change rarely. One day keeps repeat visits on
-      # a phone connection quick without holding a stale photo for a week.
-      - path: /assets/*
-        name: Cache-Control
-        value: public, max-age=86400
+      # Stylesheet and scripts must never be cached ahead of the HTML that uses
+      # them: a phone holding yesterday's CSS with today's markup renders the
+      # page unstyled. `no-cache` still caches — it just revalidates first, so
+      # an unchanged file costs a 304 rather than a re-download.
       - path: /css/*
         name: Cache-Control
-        value: public, max-age=86400
+        value: no-cache
       - path: /js/*
         name: Cache-Control
-        value: public, max-age=86400
+        value: no-cache
+
+      # Photos are the heavy part, so they keep a short cache. An hour saves
+      # repeat views on a phone connection without hiding a swapped photo.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=3600, must-revalidate

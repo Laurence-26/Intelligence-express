@@ -15,7 +15,7 @@ open `index.html` and it runs.
 index.html                  the whole page
 css/styles.css              styles (design tokens at the top of the file)
 js/app.js                   language switching, tracking, forms, modal, nav
-js/italk.js                 the I Talk assistant
+js/ichat.js                 the I Chat assistant
 assets/                     photography and logo
 content/brand-copy.md       the original Swahili launch copy the site is built from
 tests/interactions.html     browser test page for the interactive bits
@@ -40,7 +40,7 @@ render.yaml                 Render deployment blueprint
   carries a *Mfumo wa majaribio / Demo system* badge for the same reason.
   Wiring it to a real system means replacing `lookup()` in `js/app.js` with a
   `fetch()` to an API returning the same shape, and dropping the badge.
-- **I Talk — the assistant.** A floating helper that answers common questions in
+- **I Chat — the assistant.** A floating helper that answers common questions in
   Swahili and English, looks up a tracking code inline (it drives the tracking
   panel on the page), and hands anything else to WhatsApp. See below.
 - **Responsive from 280px to ultrawide.** Checked at 24 widths from 280 to 2560
@@ -67,9 +67,9 @@ python -m http.server 8000
 # then visit http://localhost:8000
 ```
 
-## I Talk
+## I Chat
 
-`js/italk.js` is a **rule-based assistant, not a language model.** It matches the
+`js/ichat.js` is a **rule-based assistant, not a language model.** It matches the
 visitor's message against a keyword-scored list of topics in `TOPICS` and replies
 from written Swahili and English answers. It follows the site's SW/EN toggle, and
 recognises a tracking code anywhere in a message.
@@ -86,7 +86,7 @@ It is rule-based for one hard reason: **this is a static site, and a static site
 cannot hold an API key.** Anything in `js/` is downloaded by every visitor, so a
 key put there is a published key — someone will find it and spend your credit.
 
-Giving I Talk a real model means adding a small server that holds the key:
+Giving I Chat a real model means adding a small server that holds the key:
 
 1. Add a **Web Service** on Render (Node) alongside this static site, with
    `ANTHROPIC_API_KEY` set as an environment variable in the dashboard — never in
@@ -100,11 +100,11 @@ Giving I Talk a real model means adding a small server that holds the key:
 import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic();               // reads ANTHROPIC_API_KEY
 
-app.post("/api/italk", async (req, res) => {
+app.post("/api/ichat", async (req, res) => {
   const message = await client.messages.create({
     model: "claude-opus-5",
     max_tokens: 1024,
-    system: "You are I Talk, the assistant for Intelligence Express, a cargo " +
+    system: "You are I Chat, the assistant for Intelligence Express, a cargo " +
             "and parcel company in Kariakoo, Dar es Salaam. Answer in the " +
             "language the customer writes in. Never quote a price or a transit " +
             "time — direct those to WhatsApp on +255 690 500 000.",
@@ -114,7 +114,7 @@ app.post("/api/italk", async (req, res) => {
 });
 ```
 
-3. In `js/italk.js`, replace the `answer()` call in `send()` with a `fetch()` to
+3. In `js/ichat.js`, replace the `answer()` call in `send()` with a `fetch()` to
    that endpoint, keeping the current rule-based answers as the offline fallback.
 
 Keep the "never invent a price" instruction in the system prompt — a model will
@@ -167,9 +167,18 @@ To set it up by hand instead (**New → Static Site**): leave **Build Command**
 empty and set **Publish Directory** to `.`.
 
 The blueprint also sets `nosniff`, `Referrer-Policy` and `X-Frame-Options` on
-every response, and a one-day cache on `assets/`, `css/` and `js/`. If you
-replace a photo and want it live immediately, either use a new filename or clear
-the cache from the Render dashboard.
+every response, and its caching is deliberate:
+
+- **`css/` and `js/` are `no-cache`.** They still cache — the browser just
+  revalidates first, so an unchanged file costs a 304 instead of a download.
+  This matters: a phone holding yesterday's stylesheet with today's HTML renders
+  the page completely unstyled, which is exactly what happens under a long cache.
+- **`assets/` caches for an hour.** Photos are the heavy part, so repeat views
+  on a phone connection stay quick, and a swapped photo still appears within the
+  hour.
+
+If a change must reach returning visitors *immediately*, bump the `?v=` on the
+stylesheet and script tags in `index.html` — a new URL is in nobody's cache.
 
 ### Anywhere else
 

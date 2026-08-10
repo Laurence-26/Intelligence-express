@@ -21,7 +21,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800;1,900&family=Barlow:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/styles.css" />
+<!-- ?v= is a cache buster: phones that cached the old stylesheet under the
+     previous one-day Cache-Control header need a new URL to fetch it again.
+     Bump it whenever a change must reach returning visitors immediately. -->
+<link rel="stylesheet" href="css/styles.css?v=2" />
 
 <script type="application/ld+json">
 {
@@ -436,39 +439,39 @@
   </div>
 </div>
 
-<!-- I Talk — automated assistant. Answers common questions and hands anything
+<!-- I Chat — automated assistant. Answers common questions and hands anything
      it cannot answer to WhatsApp. No model API is called from this page. -->
-<button class="italk-launch" id="italk-launch" type="button" aria-expanded="false" aria-controls="italk-panel">
-  <span class="italk-launch-dot" aria-hidden="true"></span>
-  <span class="italk-launch-text">I&nbsp;Talk</span>
+<button class="ichat-launch" id="ichat-launch" type="button" aria-expanded="false" aria-controls="ichat-panel">
+  <span class="ichat-launch-dot" aria-hidden="true"></span>
+  <span class="ichat-launch-text">I&nbsp;Chat</span>
 </button>
 
-<section class="italk" id="italk-panel" aria-labelledby="italk-title" hidden>
-  <header class="italk-head">
+<section class="ichat" id="ichat-panel" aria-labelledby="ichat-title" hidden>
+  <header class="ichat-head">
     <div>
-      <h2 id="italk-title">I Talk</h2>
-      <p data-i18n="italkTagline">Msaidizi wa Intelligence Express</p>
+      <h2 id="ichat-title">I Chat</h2>
+      <p data-i18n="ichatTagline">Msaidizi wa Intelligence Express</p>
     </div>
-    <button class="italk-close" id="italk-close" type="button" aria-label="Funga">×</button>
+    <button class="ichat-close" id="ichat-close" type="button" aria-label="Funga">×</button>
   </header>
 
-  <div class="italk-log" id="italk-log" role="log" aria-live="polite" aria-atomic="false"></div>
+  <div class="ichat-log" id="ichat-log" role="log" aria-live="polite" aria-atomic="false"></div>
 
-  <div class="italk-chips" id="italk-chips"></div>
+  <div class="ichat-chips" id="ichat-chips"></div>
 
-  <form class="italk-form" id="italk-form" novalidate>
-    <label class="sr-only" for="italk-input" data-i18n="italkInputLabel">Andika ujumbe</label>
-    <input id="italk-input" name="message" type="text" autocomplete="off"
-           data-placeholder-i18n="italkPlaceholder" placeholder="Andika swali lako..." />
-    <button class="italk-send" type="submit" aria-label="Tuma">
+  <form class="ichat-form" id="ichat-form" novalidate>
+    <label class="sr-only" for="ichat-input" data-i18n="ichatInputLabel">Andika ujumbe</label>
+    <input id="ichat-input" name="message" type="text" autocomplete="off"
+           data-placeholder-i18n="ichatPlaceholder" placeholder="Andika swali lako..." />
+    <button class="ichat-send" type="submit" aria-label="Tuma">
       <span aria-hidden="true">→</span>
     </button>
   </form>
 
-  <p class="italk-note" data-i18n="italkNote">Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.</p>
+  <p class="ichat-note" data-i18n="ichatNote">Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.</p>
 </section>
 
-<script src="js/app.js" defer></script>
-<script src="js/italk.js" defer></script>
+<script src="js/app.js?v=2" defer></script>
+<script src="js/ichat.js?v=2" defer></script>
 </body>
 </html>

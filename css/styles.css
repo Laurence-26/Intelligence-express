@@ -1026,9 +1026,9 @@ body.modal-open { overflow: hidden; }
   box-shadow: 0 18px 40px rgba(22, 24, 27, 0.1);
 }
 
-/* ---------- I Talk assistant ---------- */
+/* ---------- I Chat assistant ---------- */
 
-.italk-launch {
+.ichat-launch {
   position: fixed;
   right: clamp(14px, 3vw, 26px);
   bottom: clamp(14px, 3vw, 26px);
@@ -1049,16 +1049,16 @@ body.modal-open { overflow: hidden; }
   box-shadow: 0 14px 34px rgba(22, 24, 27, 0.28);
   transition: background-color 160ms ease, transform 160ms ease;
 }
-.italk-launch:hover { background: var(--rust); }
-.italk-launch:active { transform: translateY(1px); }
-.italk-launch-dot {
+.ichat-launch:hover { background: var(--rust); }
+.ichat-launch:active { transform: translateY(1px); }
+.ichat-launch-dot {
   width: 9px; height: 9px;
   border-radius: 50%;
   background: var(--teal);
   flex: 0 0 auto;
 }
 
-.italk {
+.ichat {
   position: fixed;
   right: clamp(14px, 3vw, 26px);
   bottom: clamp(14px, 3vw, 26px);
@@ -1075,7 +1075,7 @@ body.modal-open { overflow: hidden; }
   animation: ie-rise 200ms ease-out;
 }
 
-.italk-head {
+.ichat-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -1084,14 +1084,14 @@ body.modal-open { overflow: hidden; }
   background: var(--ink);
   color: #fff;
 }
-.italk-head h2 {
+.ichat-head h2 {
   font-weight: 900;
   font-size: 19px;
   letter-spacing: -0.01em;
 }
-.italk-head p { font-size: 13px; color: rgba(255, 255, 255, 0.66); margin-top: 2px; }
+.ichat-head p { font-size: 13px; color: rgba(255, 255, 255, 0.66); margin-top: 2px; }
 
-.italk-close {
+.ichat-close {
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.24);
   width: 32px; height: 32px;
@@ -1103,9 +1103,9 @@ body.modal-open { overflow: hidden; }
   flex: 0 0 auto;
   transition: background-color 160ms ease;
 }
-.italk-close:hover { background: rgba(255, 255, 255, 0.16); }
+.ichat-close:hover { background: rgba(255, 255, 255, 0.16); }
 
-.italk-log {
+.ichat-log {
   flex: 1 1 auto;
   overflow-y: auto;
   padding: 18px;
@@ -1114,7 +1114,7 @@ body.modal-open { overflow: hidden; }
   align-content: start;
 }
 
-.italk-msg {
+.ichat-msg {
   max-width: 88%;
   padding: 11px 15px;
   border-radius: 16px;
@@ -1123,30 +1123,30 @@ body.modal-open { overflow: hidden; }
   white-space: pre-line;
   overflow-wrap: break-word;
 }
-.italk-msg.from-bot {
+.ichat-msg.from-bot {
   justify-self: start;
   background: #fff;
   border: 1px solid var(--line);
   border-bottom-left-radius: 5px;
   color: var(--ink);
 }
-.italk-msg.from-user {
+.ichat-msg.from-user {
   justify-self: end;
   background: var(--ink);
   color: #fff;
   border-bottom-right-radius: 5px;
 }
-.italk-msg a { color: var(--rust); text-decoration: underline; }
-.italk-msg.from-user a { color: #fff; }
+.ichat-msg a { color: var(--rust); text-decoration: underline; }
+.ichat-msg.from-user a { color: #fff; }
 
-.italk-chips {
+.ichat-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
   padding: 0 18px 12px;
 }
-.italk-chips:empty { display: none; }
-.italk-chips button {
+.ichat-chips:empty { display: none; }
+.ichat-chips button {
   border: 1px solid var(--line-strong);
   background: #fff;
   color: var(--ink-soft);
@@ -1158,14 +1158,14 @@ body.modal-open { overflow: hidden; }
   cursor: pointer;
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
-.italk-chips button:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
+.ichat-chips button:hover { background: var(--orange); border-color: var(--orange); color: #fff; }
 
-.italk-form {
+.ichat-form {
   display: flex;
   gap: 8px;
   padding: 0 18px 12px;
 }
-.italk-form input {
+.ichat-form input {
   flex: 1 1 auto;
   min-width: 0;
   padding: 12px 15px;
@@ -1178,9 +1178,9 @@ body.modal-open { overflow: hidden; }
   outline: none;
   transition: border-color 160ms ease;
 }
-.italk-form input:focus { border-color: var(--orange); }
+.ichat-form input:focus { border-color: var(--orange); }
 
-.italk-send {
+.ichat-send {
   flex: 0 0 auto;
   width: 44px; height: 44px;
   border: 0;
@@ -1192,24 +1192,24 @@ body.modal-open { overflow: hidden; }
   cursor: pointer;
   transition: background-color 160ms ease;
 }
-.italk-send:hover { background: var(--ink); }
+.ichat-send:hover { background: var(--ink); }
 
-.italk-note {
+.ichat-note {
   padding: 0 18px 16px;
   font-size: 12px;
   line-height: 1.45;
   color: var(--muted-2);
 }
 
-body.italk-open { overflow: hidden; }
+body.ichat-open { overflow: hidden; }
 
 @media (max-width: 560px) {
-  .italk {
+  .ichat {
     right: 8px; left: 8px; bottom: 8px;
     width: auto;
     max-height: calc(100dvh - 16px);
   }
-  .italk-launch { padding: 13px 18px; font-size: 14px; }
+  .ichat-launch { padding: 13px 18px; font-size: 14px; }
 }
 
 /* ---------- Responsive ---------- */

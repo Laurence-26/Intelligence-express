@@ -63,52 +63,52 @@ document.getElementById('f').addEventListener('load', function () {
       ok("result hidden for bad code", d.getElementById("track-result").hidden);
       ok("no invented shipment", /majaribio/i.test(d.getElementById("track-error").textContent));
 
-      /* ---------------------------------------------------------- I Talk */
-      var panel = d.getElementById("italk-panel");
-      var launch = d.getElementById("italk-launch");
+      /* ---------------------------------------------------------- I Chat */
+      var panel = d.getElementById("ichat-panel");
+      var launch = d.getElementById("ichat-launch");
       ok("assistant starts closed", panel.hidden);
 
       launch.click();
       ok("assistant opens", !panel.hidden);
       ok("launch hidden while open", launch.hidden);
-      ok("welcome message", /I Talk/.test(d.querySelector(".italk-msg.from-bot").textContent));
-      ok("quick replies offered", d.querySelectorAll("#italk-chips button").length === 5);
+      ok("welcome message", /I Chat/.test(d.querySelector(".ichat-msg.from-bot").textContent));
+      ok("quick replies offered", d.querySelectorAll("#ichat-chips button").length === 5);
 
-      d.getElementById("italk-input").value = "pickup ni bure?";
-      submit(d.getElementById("italk-form"));
+      d.getElementById("ichat-input").value = "pickup ni bure?";
+      submit(d.getElementById("ichat-form"));
       await sleep(400);
-      var last = d.querySelectorAll(".italk-msg.from-bot");
+      var last = d.querySelectorAll(".ichat-msg.from-bot");
       last = last[last.length - 1];
       ok("answers pickup question", /bure/i.test(last.textContent));
       ok("offers whatsapp link", last.querySelector('a[href*="wa.me"]') !== null);
 
-      d.getElementById("italk-input").value = "bei ni ngapi?";
-      submit(d.getElementById("italk-form"));
+      d.getElementById("ichat-input").value = "bei ni ngapi?";
+      submit(d.getElementById("ichat-form"));
       await sleep(400);
-      var priceMsg = d.querySelectorAll(".italk-msg.from-bot");
+      var priceMsg = d.querySelectorAll(".ichat-msg.from-bot");
       priceMsg = priceMsg[priceMsg.length - 1];
       ok("does not invent a price", !/\d{4,}\s*(tsh|shilingi)/i.test(priceMsg.textContent));
       ok("hands pricing to the team", priceMsg.querySelector('a[href*="wa.me"]') !== null);
 
-      d.getElementById("italk-input").value = "IE-6310";
-      submit(d.getElementById("italk-form"));
+      d.getElementById("ichat-input").value = "IE-6310";
+      submit(d.getElementById("ichat-form"));
       await sleep(400);
-      var trackMsg = d.querySelectorAll(".italk-msg.from-bot");
+      var trackMsg = d.querySelectorAll(".ichat-msg.from-bot");
       trackMsg = trackMsg[trackMsg.length - 1];
       ok("assistant answers a tracking code", /Kampala/.test(trackMsg.textContent));
       ok("assistant drives the tracking panel", d.getElementById("track-code").textContent === "IE-6310");
 
-      d.getElementById("italk-input").value = "IE-1234";  // well-formed but unknown
-      submit(d.getElementById("italk-form"));
+      d.getElementById("ichat-input").value = "IE-1234";  // well-formed but unknown
+      submit(d.getElementById("ichat-form"));
       await sleep(400);
-      var missMsg = d.querySelectorAll(".italk-msg.from-bot");
+      var missMsg = d.querySelectorAll(".ichat-msg.from-bot");
       missMsg = missMsg[missMsg.length - 1];
       ok("unknown code is refused, not faked", /majaribio/i.test(missMsg.textContent));
 
-      var before = d.querySelectorAll(".italk-msg.from-user").length;
-      d.getElementById("italk-input").value = "   ";
-      submit(d.getElementById("italk-form"));
-      ok("blank message ignored", d.querySelectorAll(".italk-msg.from-user").length === before);
+      var before = d.querySelectorAll(".ichat-msg.from-user").length;
+      d.getElementById("ichat-input").value = "   ";
+      submit(d.getElementById("ichat-form"));
+      ok("blank message ignored", d.querySelectorAll(".ichat-msg.from-user").length === before);
 
       d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
       ok("escape closes assistant", panel.hidden && !launch.hidden);
@@ -124,10 +124,10 @@ document.getElementById('f').addEventListener('load', function () {
       ok("lang persisted", w.localStorage.getItem("ie-lang") === "en");
 
       launch.click();
-      d.getElementById("italk-input").value = "how much does it cost?";
-      submit(d.getElementById("italk-form"));
+      d.getElementById("ichat-input").value = "how much does it cost?";
+      submit(d.getElementById("ichat-form"));
       await sleep(400);
-      var enMsg = d.querySelectorAll(".italk-msg.from-bot");
+      var enMsg = d.querySelectorAll(".ichat-msg.from-bot");
       enMsg = enMsg[enMsg.length - 1];
       ok("assistant answers in english", /quote|price|depends/i.test(enMsg.textContent));
       d.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));

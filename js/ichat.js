@@ -1,4 +1,4 @@
-/* I Talk — the Intelligence Express assistant.
+/* I Chat — the Intelligence Express assistant.
  *
  * This runs entirely in the browser against a written knowledge base. It is
  * not a language model: a static page cannot hold an API key, so calling one
@@ -19,7 +19,7 @@
 
   var UI = {
     sw: {
-      welcome: "Habari! Mimi ni I Talk, msaidizi wa Intelligence Express. Naweza kukusaidia na huduma zetu, pickup, kufuatilia mzigo, au kukuunganisha na timu yetu.",
+      welcome: "Habari! Mimi ni I Chat, msaidizi wa Intelligence Express. Naweza kukusaidia na huduma zetu, pickup, kufuatilia mzigo, au kukuunganisha na timu yetu.",
       fallback: "Samahani, sijaelewa vizuri. Naweza kukusaidia na: huduma, pickup, kufuatilia mzigo, kuhama, au maeneo tunayofika. Kwa jambo lingine lolote, nitakuunganisha na timu.",
       whatsapp: "Fungua WhatsApp",
       call: "Piga 0690 500 000",
@@ -35,7 +35,7 @@
       trackMissing: "Namba hiyo haipo kwenye mfumo wa majaribio. Namba za majaribio ni: IE-4821, IE-7390, IE-1156, IE-2044, IE-6310, IE-9075. Kwa mzigo halisi, piga 0690 500 000."
     },
     en: {
-      welcome: "Hello! I'm I Talk, the Intelligence Express assistant. I can help with our services, pickup, tracking a shipment, or connect you with our team.",
+      welcome: "Hello! I'm I Chat, the Intelligence Express assistant. I can help with our services, pickup, tracking a shipment, or connect you with our team.",
       fallback: "Sorry, I didn't quite catch that. I can help with: services, pickup, tracking a shipment, relocation, or where we deliver. For anything else, I'll connect you with the team.",
       whatsapp: "Open WhatsApp",
       call: "Call 0690 500 000",
@@ -146,13 +146,13 @@
   var lang = document.documentElement.lang === "en" ? "en" : "sw";
   var started = false;
 
-  var launch = document.getElementById("italk-launch");
-  var panel = document.getElementById("italk-panel");
-  var log = document.getElementById("italk-log");
-  var chips = document.getElementById("italk-chips");
-  var form = document.getElementById("italk-form");
-  var input = document.getElementById("italk-input");
-  var closeBtn = document.getElementById("italk-close");
+  var launch = document.getElementById("ichat-launch");
+  var panel = document.getElementById("ichat-panel");
+  var log = document.getElementById("ichat-log");
+  var chips = document.getElementById("ichat-chips");
+  var form = document.getElementById("ichat-form");
+  var input = document.getElementById("ichat-input");
+  var closeBtn = document.getElementById("ichat-close");
 
   if (!launch || !panel || !log || !form || !input) return;
 
@@ -162,7 +162,7 @@
 
   function addMessage(text, who, actions) {
     var div = document.createElement("div");
-    div.className = "italk-msg from-" + who;
+    div.className = "ichat-msg from-" + who;
     div.textContent = text;
 
     (actions || []).forEach(function (kind) {
@@ -258,7 +258,7 @@
     launch.hidden = true;
 
     if (window.matchMedia("(max-width: 560px)").matches) {
-      document.body.classList.add("italk-open");
+      document.body.classList.add("ichat-open");
     }
 
     if (!started) {
@@ -273,7 +273,7 @@
     panel.hidden = true;
     launch.hidden = false;
     launch.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("italk-open");
+    document.body.classList.remove("ichat-open");
     launch.focus();
   }
 

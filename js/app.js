@@ -41,10 +41,10 @@
       trackEta: "Inatarajiwa", trackCode: "Namba ya mzigo",
       stage1: "Imechukuliwa", stage2: "Hub", stage3: "Njiani", stage4: "Imefikishwa",
 
-      italkTagline: "Msaidizi wa Intelligence Express",
-      italkInputLabel: "Andika ujumbe",
-      italkPlaceholder: "Andika swali lako...",
-      italkNote: "Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.",
+      ichatTagline: "Msaidizi wa Intelligence Express",
+      ichatInputLabel: "Andika ujumbe",
+      ichatPlaceholder: "Andika swali lako...",
+      ichatNote: "Majibu ya haraka ya maswali ya kawaida. Kwa bei na maelezo zaidi, tunakuunganisha WhatsApp.",
 
       svcLabel: "Huduma zetu",
       svcTitle: "Wewe uza, sisi tutadeliver.",
@@ -140,10 +140,10 @@
       trackEta: "Expected", trackCode: "Tracking number",
       stage1: "Collected", stage2: "At hub", stage3: "In transit", stage4: "Delivered",
 
-      italkTagline: "Intelligence Express assistant",
-      italkInputLabel: "Type a message",
-      italkPlaceholder: "Ask your question...",
-      italkNote: "Quick answers to common questions. For prices and detail, we hand you to WhatsApp.",
+      ichatTagline: "Intelligence Express assistant",
+      ichatInputLabel: "Type a message",
+      ichatPlaceholder: "Ask your question...",
+      ichatNote: "Quick answers to common questions. For prices and detail, we hand you to WhatsApp.",
 
       svcLabel: "Our services",
       svcTitle: "You sell. We deliver.",
@@ -366,7 +366,7 @@
     }
   };
 
-  // Expose the demo set so the I Talk assistant can answer tracking questions.
+  // Expose the demo set so the I Chat assistant can answer tracking questions.
   window.IE_SHIPMENTS = SHIPMENTS;
 
   /* ---------------------------------------------------------------- helpers */
@@ -420,7 +420,7 @@
     if (state.foundCode) renderShipment(state.foundCode);
     storeLang(lang);
 
-    // I Talk listens for this so the assistant switches language with the site.
+    // I Chat listens for this so the assistant switches language with the site.
     document.dispatchEvent(new CustomEvent("ie:lang", { detail: { lang: lang } }));
   }
 
