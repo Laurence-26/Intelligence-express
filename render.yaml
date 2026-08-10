@@ -1,0 +1,35 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# The site is plain HTML, CSS and JavaScript with no dependencies, so there is
+# nothing to build: Render serves the repository root as-is. Pushing to main
+# redeploys automatically.
+
+services:
+  - type: web
+    name: intelligence-express
+    runtime: static
+    buildCommand: echo "No build step - static files are served as-is"
+    staticPublishPath: ./
+
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+
+      # Photos and the stylesheet change rarely. One day keeps repeat visits on
+      # a phone connection quick without holding a stale photo for a week.
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /css/*
+        name: Cache-Control
+        value: public, max-age=86400
+      - path: /js/*
+        name: Cache-Control
+        value: public, max-age=86400

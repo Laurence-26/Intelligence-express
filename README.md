@@ -79,9 +79,31 @@ python -m http.server 8000
 
 ## Deploying
 
-It's a static site, so anything serves it: GitHub Pages (Settings → Pages →
-deploy from branch, root), Netlify, Vercel, or ordinary shared hosting via FTP.
-No environment variables, no server-side code.
+### Render (what this repo is set up for)
+
+`render.yaml` describes the whole deployment, so Render configures itself:
+
+1. In the Render dashboard choose **New → Blueprint**.
+2. Connect the GitHub account and pick `Laurence-26/Intelligence-express`.
+3. Render reads `render.yaml`, shows a static site called
+   `intelligence-express`, and you click **Apply**.
+
+There is no build step — Render publishes the repository root as-is — and every
+push to `main` redeploys automatically. The free static-site plan is enough.
+
+To set it up by hand instead (**New → Static Site**): leave **Build Command**
+empty and set **Publish Directory** to `.`.
+
+The blueprint also sets `nosniff`, `Referrer-Policy` and `X-Frame-Options` on
+every response, and a one-day cache on `assets/`, `css/` and `js/`. If you
+replace a photo and want it live immediately, either use a new filename or clear
+the cache from the Render dashboard.
+
+### Anywhere else
+
+Any static host works: GitHub Pages (Settings → Pages → deploy from branch,
+root), Netlify, Vercel, or ordinary shared hosting via FTP. No environment
+variables, no server-side code.
 
 If you put it on a real domain, update the `canonical` URL and the `og:image`
 path in `index.html` to absolute URLs.
